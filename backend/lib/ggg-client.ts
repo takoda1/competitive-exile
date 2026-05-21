@@ -24,7 +24,9 @@ async function postForm(body: Record<string, string>): Promise<TokenResponse> {
     throw new Error(`Token request failed ${res.status}: ${text}`)
   }
 
-  return res.json() as Promise<TokenResponse>
+  const data = await res.json() as TokenResponse
+  if (!data.sub) throw new Error('Token response missing required sub field')
+  return data
 }
 
 export function exchangeCode(

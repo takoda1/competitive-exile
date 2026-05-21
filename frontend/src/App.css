@@ -1,0 +1,73 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.75rem 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-logo {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.site-title {
+  font-size: 1.25rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.login-btn {
+  background: transparent;
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+.login-btn:hover {
+  border-color: var(--accent);
+  background: rgba(200, 155, 60, 0.08);
+}
+
+.site-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.site-footer {
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}

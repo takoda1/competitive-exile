@@ -23,8 +23,8 @@ Step 5 what data should we store if storing user item data isnt against tos? Whe
 
 
 ## Usage
-1. Download [ngrok](https://ngrok.com/)
-   2. Set up desired domain
+1. Download [ngrok](https://ngrok.com/) and set up desired domain
 2. Download nvm + npm
-3. `cd src/backend && npm run dev`
-4. `http --url=competitive-exile.ngrok.dev 3000`
+3. `npm run dev` (runs both backend + frontend via concurrently)
+4. Or individually: `cd backend && npm run dev` / `cd frontend && npm run dev`
+5. Tunnel: `http --url=competitive-exile.ngrok.app 5173`
