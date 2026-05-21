@@ -4,15 +4,23 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch server.ts",
-    "start": "tsx server.ts"
+    "dev": "tsx watch --env-file=.env server.ts",
+    "start": "tsx --env-file=.env server.ts",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/session": "^11.1.1",
+    "better-sqlite3": "^12.10.0",
     "fastify": "^5.0.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.0.0",
     "tsx": "^4.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.7"
   }
 }
