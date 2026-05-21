@@ -105,7 +105,7 @@ export default async function authRoutes(app: FastifyInstance) {
         return reply.code(400).send({ error: 'Authentication failed' })
       }
 
-      return reply.redirect('/')
+      return reply.redirect(process.env.FRONTEND_URL ?? '/')
     },
   )
 

@@ -25,7 +25,7 @@ export default fp(async (app) => {
   await app.register(cookie)
   await app.register(session, {
     secret: process.env.SESSION_SECRET!,
-    cookie: { secure: process.env.NODE_ENV !== 'development', httpOnly: true, sameSite: 'strict' },
+    cookie: { secure: process.env.NODE_ENV !== 'development', httpOnly: true, sameSite: 'lax' },
   })
 
   app.decorateRequest('user', null)

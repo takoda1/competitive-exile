@@ -1,0 +1,159 @@
+.guide-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.guide-page h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.guide-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.guide-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+/* Vertical tab list */
+.craft-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  width: 180px;
+}
+
+.craft-tab {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.craft-tab:hover {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+.craft-tab.active {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--surface-raised);
+}
+
+/* Content panel */
+.craft-panel {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.5rem;
+}
+
+.craft-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.craft-header h2 {
+  font-size: 1.4rem;
+}
+
+.craft-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+.badge-low {
+  background: rgba(74, 124, 89, 0.15);
+  border-color: #4a7c59;
+  color: #7aba90;
+}
+.badge-medium {
+  background: rgba(122, 110, 34, 0.15);
+  border-color: #7a6e22;
+  color: #c8b84a;
+}
+.badge-high {
+  background: rgba(122, 48, 48, 0.15);
+  border-color: #7a3030;
+  color: #c87a7a;
+}
+.badge-timing {
+  background: rgba(60, 100, 160, 0.15);
+  border-color: #3c64a0;
+  color: #7aaae0;
+}
+
+.craft-note-inline {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.craft-description {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.craft-panel h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.craft-steps {
+  padding-left: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.craft-steps li {
+  margin-bottom: 0.35rem;
+  color: var(--text-muted);
+}
+
+.craft-section {
+  margin-bottom: 1.25rem;
+}
+
+.craft-notes {
+  margin-top: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.tab-timing {
+  display: block;
+  font-size: 0.7rem;
+  color: #7aaae0;
+  margin-top: 0.1rem;
+}
+
+.craft-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}

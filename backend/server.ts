@@ -3,7 +3,7 @@ import helmet from '@fastify/helmet'
 import authPlugin from './plugins/auth.js'
 import authRoutes from './routes/auth.js'
 
-const REQUIRED_ENV = ['SESSION_SECRET', 'OAUTH_CLIENT_ID', 'OAUTH_CLIENT_SECRET'] as const
+const REQUIRED_ENV = ['SESSION_SECRET', 'OAUTH_CLIENT_ID', 'OAUTH_CLIENT_SECRET', 'GGG_REDIRECT_URI'] as const
 for (const key of REQUIRED_ENV) {
   if (!process.env[key]) {
     console.error(`Missing required environment variable: ${key}`)

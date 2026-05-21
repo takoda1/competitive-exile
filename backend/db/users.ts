@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import fs from 'node:fs'
 
 const dbFile = process.env.DB_FILE ?? './competitive_exile.db'
-const dbPath = path.resolve(fileURLToPath(import.meta.url), '../../..', dbFile)
+const dbPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..', dbFile)
 
 fs.mkdirSync(path.dirname(dbPath), { recursive: true })
 const db = new Database(dbPath)
