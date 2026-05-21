@@ -21,3 +21,10 @@ Step 4: try to understand implementing oauth with ggg as the login mechanism
 
 Step 5 what data should we store if storing user item data isnt against tos? Where and how should it be stored? (probably relational)
 
+
+## Usage
+1. Download [ngrok](https://ngrok.com/)
+   2. Set up desired domain
+2. Download nvm + npm
+3. `cd src/backend && npm run dev`
+4. `http --url=competitive-exile.ngrok.dev 3000`
