@@ -71,3 +71,30 @@
   font-size: 0.8rem;
   text-align: center;
 }
+
+@media (max-width: 640px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .site-nav {
+    order: 1;
+    width: 100%;
+    flex: none;
+    gap: 1rem;
+  }
+
+  .login-btn {
+    margin-left: auto;
+  }
+
+  .site-main {
+    padding: 1rem;
+  }
+
+  .site-footer {
+    padding: 0.75rem 1rem;
+  }
+}

@@ -157,3 +157,50 @@
   flex-direction: column;
   gap: 0.35rem;
 }
+
+@media (max-width: 640px) {
+  .guide-page h1 {
+    font-size: 1.4rem;
+  }
+
+  .guide-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .craft-tabs {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+
+  .craft-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    border-radius: 2px 2px 0 0;
+    border-bottom: none;
+  }
+
+  .craft-tab.active {
+    border-color: transparent;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .tab-timing {
+    display: inline;
+    margin-left: 0.35rem;
+    margin-top: 0;
+  }
+
+  .craft-panel {
+    border-top: none;
+    padding: 1rem;
+  }
+
+  .craft-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
