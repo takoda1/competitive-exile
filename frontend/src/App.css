@@ -59,6 +59,32 @@
   background: rgba(200, 155, 60, 0.08);
 }
 
+.auth-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auth-username {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+.logout-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
 .site-main {
   flex: 1;
   padding: 2rem;

@@ -1,17 +1,4 @@
-import Database from 'better-sqlite3'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import fs from 'node:fs'
-
-const dbFile = process.env.DB_FILE ?? './competitive_exile.db'
-const dbPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..', dbFile)
-
-fs.mkdirSync(path.dirname(dbPath), { recursive: true })
-const db = new Database(dbPath)
-db.pragma('journal_mode = WAL')
-
-const schemaPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'schema.sql')
-db.exec(fs.readFileSync(schemaPath, 'utf8'))
+import db from './connection.js'
 
 export interface User {
   id: number
@@ -20,6 +7,7 @@ export interface User {
   access_token: string
   refresh_token: string | null
   token_expiry: string
+  selected_league: string | null
 }
 
 const upsertUser = db.prepare<[string, string, string, string | null, string]>(`
@@ -49,6 +37,20 @@ const getById = db.prepare<[number]>('SELECT * FROM users WHERE id = ?')
 
 export function getUserById(id: number): User | undefined {
   return getById.get(id) as User | undefined
+}
+
+const allUsers = db.prepare('SELECT * FROM users')
+
+export function getAllUsers(): User[] {
+  return allUsers.all() as User[]
+}
+
+const activeLeagues = db.prepare(
+  'SELECT DISTINCT selected_league FROM users WHERE selected_league IS NOT NULL',
+)
+
+export function getActiveLeagues(): string[] {
+  return (activeLeagues.all() as { selected_league: string }[]).map(r => r.selected_league)
 }
 
 const updateTokens = db.prepare<[string, string | null, string, number]>(`

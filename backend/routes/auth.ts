@@ -5,7 +5,7 @@ import { exchangeCode } from '../lib/ggg-client.js'
 import { saveUser } from '../db/users.js'
 
 const DEFAULT_AUTH_URL = 'https://www.pathofexile.com/oauth/authorize'
-const DEFAULT_SCOPES = 'account:profile account:characters account:stashes service:leagues'
+const DEFAULT_SCOPES = 'account:characters account:stashes account:leagues'
 
 async function resolveUserInfo(
   accessToken: string,
@@ -30,10 +30,12 @@ async function resolveUserInfo(
   }
 }
 
-export default async function authRoutes(app: FastifyInstance) {
-  await app.register(rateLimit, { max: 10, timeWindow: '1 minute' })
+const oauthRateLimit = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } } as const
 
-  app.get('/login', async (req, reply) => {
+export default async function authRoutes(app: FastifyInstance) {
+  await app.register(rateLimit, { global: false })
+
+  app.get('/login', oauthRateLimit, async (req, reply) => {
     const verifier = generateCodeVerifier()
     const challenge = await generateCodeChallenge(verifier)
     const state = generateState()
@@ -59,6 +61,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.get<{ Querystring: { code?: string; state?: string; error?: string } }>(
     '/callback',
+    oauthRateLimit,
     async (req, reply) => {
       const { code, state, error } = req.query
 

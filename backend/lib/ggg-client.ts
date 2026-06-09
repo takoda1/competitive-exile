@@ -15,7 +15,10 @@ async function postForm(body: Record<string, string>): Promise<TokenResponse> {
   const tokenUrl = process.env.OAUTH_TOKEN_URL ?? DEFAULT_TOKEN_URL
   const res = await fetch(tokenUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'competitive-exile/1.0',
+    },
     body: new URLSearchParams(body).toString(),
   })
 

@@ -1,0 +1,105 @@
+.dashboard {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+.dashboard-hint {
+  color: var(--text-muted);
+}
+
+.snapshot-btn {
+  background: transparent;
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+.snapshot-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(200, 155, 60, 0.08);
+}
+.snapshot-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.wealth-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.wealth-value {
+  font-size: 3.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.wealth-unit {
+  font-size: 1.5rem;
+  margin-left: 0.25rem;
+}
+
+.wealth-league {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wealth-time {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.snapshot-history h2 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.snapshot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.snapshot-table th,
+.snapshot-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.snapshot-table th {
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
+.snapshot-table td:last-child {
+  color: var(--accent);
+  text-align: right;
+}

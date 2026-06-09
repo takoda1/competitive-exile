@@ -3,6 +3,7 @@ import cookie from '@fastify/cookie'
 import session from '@fastify/session'
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import { getUserById, type User } from '../db/users.js'
+import { getValidAccessToken } from '../lib/token-refresh.js'
 
 declare module '@fastify/session' {
   interface FastifySessionObject {
@@ -34,6 +35,17 @@ export default fp(async (app) => {
     const userId = req.session.userId
     if (userId != null) {
       req.user = getUserById(userId) ?? null
+      if (req.user) {
+        const expiry = new Date(req.user.token_expiry).getTime()
+        if (Date.now() > expiry - 60 * 60 * 1000) {
+          try {
+            await getValidAccessToken(req.user)
+            req.user = getUserById(userId) ?? null
+          } catch {
+            req.user = null
+          }
+        }
+      }
     }
   })
 
