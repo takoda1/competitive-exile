@@ -30,7 +30,12 @@ async function resolveUserInfo(
   }
 }
 
-const oauthRateLimit = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } } as const
+// Max OAuth-flow requests per minute per client (login + callback endpoints)
+const OAUTH_RATE_LIMIT_MAX = 10
+// Truncate OAuth error strings before including them in responses (prevents log injection)
+const OAUTH_ERROR_PREVIEW_CHARS = 200
+
+const oauthRateLimit = { config: { rateLimit: { max: OAUTH_RATE_LIMIT_MAX, timeWindow: '1 minute' } } } as const
 
 export default async function authRoutes(app: FastifyInstance) {
   await app.register(rateLimit, { global: false })
@@ -66,7 +71,7 @@ export default async function authRoutes(app: FastifyInstance) {
       const { code, state, error } = req.query
 
       if (error) {
-        const safeError = String(error).slice(0, 200)
+        const safeError = String(error).slice(0, OAUTH_ERROR_PREVIEW_CHARS)
         return reply.code(400).send({ error: `OAuth error: ${safeError}` })
       }
 

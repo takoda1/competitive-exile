@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { getSnapshots, getLeaderboard } from '../db/snapshots.js'
 import { takeSnapshotForUser } from '../jobs/snapshot.js'
-import { USER_AGENT } from '../lib/constants.js'
+import { USER_AGENT, ERROR_BODY_PREVIEW_CHARS } from '../lib/constants.js'
 
 export default async function apiRoutes(app: FastifyInstance) {
   // Current user's wealth history
@@ -40,7 +40,7 @@ export default async function apiRoutes(app: FastifyInstance) {
     for (const url of probes) {
       const res = await fetch(url, { headers })
       const text = await res.text()
-      results[url] = { status: res.status, body: text.slice(0, 300) }
+      results[url] = { status: res.status, body: text.slice(0, ERROR_BODY_PREVIEW_CHARS) }
     }
     return results
   })

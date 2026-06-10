@@ -9,6 +9,8 @@ export interface Snapshot {
 }
 
 const SNAPSHOT_TTL_DAYS = 30 // A majority of players are not playing past 30 days
+// 7 days × 24 hourly snapshots — enough history for a meaningful wealth trend chart
+const DEFAULT_SNAPSHOT_LIMIT = 168
 
 const insertSnapshot = db.prepare<[number, string, number]>(
   'INSERT INTO snapshots (user_id, league, total_chaos) VALUES (?, ?, ?)',
@@ -26,7 +28,7 @@ export function saveSnapshot(userId: number, league: string, totalChaos: number)
   insertSnapshot.run(userId, league, totalChaos)
 }
 
-export function getSnapshots(userId: number, league: string, limit = 168): Snapshot[] {
+export function getSnapshots(userId: number, league: string, limit = DEFAULT_SNAPSHOT_LIMIT): Snapshot[] {
   return getByUserLeague.all(userId, league, limit) as Snapshot[]
 }
 

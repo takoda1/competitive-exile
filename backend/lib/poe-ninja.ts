@@ -1,5 +1,8 @@
 import { upsertPriceCache } from '../db/price-cache.js'
-import { USER_AGENT } from './constants.js'
+import { USER_AGENT, ERROR_BODY_PREVIEW_CHARS } from './constants.js'
+
+// Delay between individual category fetches to stay well under poe.ninja's rate limit
+const CATEGORY_DELAY_MS = 100
 
 const BASE = 'https://poe.ninja/poe1/api/economy/exchange/current/overview'
 const UA = { 'User-Agent': USER_AGENT }
@@ -31,7 +34,7 @@ async function fetchCategory(league: string, type: string): Promise<void> {
   const res = await fetch(url, { headers: UA })
   if (!res.ok) {
     const body = await res.text().catch(() => '(unreadable)')
-    throw new Error(`HTTP ${res.status} ${res.statusText} — URL: ${url} — body: ${body.slice(0, 300)}`)
+    throw new Error(`HTTP ${res.status} ${res.statusText} — URL: ${url} — body: ${body.slice(0, ERROR_BODY_PREVIEW_CHARS)}`)
   }
   const data = await res.json()
   upsertPriceCache(league, type, data)
@@ -51,7 +54,7 @@ export async function refreshPrices(league: string): Promise<void> {
       failed++
       console.error(`[poe-ninja] FAILED ${type} for ${league}:`, err instanceof Error ? err.message : err)
     }
-    await sleep(100)
+    await sleep(CATEGORY_DELAY_MS)
   }
   console.log(`[poe-ninja] ${league} complete — ${ok} ok, ${failed} failed`)
 }
