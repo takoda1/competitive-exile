@@ -27,6 +27,9 @@ export function getPriceCache(league: string, category: string): PriceCacheEntry
   return getEntry.get(league, category) as PriceCacheEntry | undefined
 }
 
-export function isCacheStale(fetchedAt: string, maxAgeMinutes = 60): boolean {
-  return Date.now() - new Date(fetchedAt).getTime() > maxAgeMinutes * 60 * 1000
+// Matches the hourly price-refresh job interval — stale after one missed refresh cycle
+const DEFAULT_CACHE_MAX_AGE_MS = 60 * 60 * 1000
+
+export function isCacheStale(fetchedAt: string, maxAgeMs = DEFAULT_CACHE_MAX_AGE_MS): boolean {
+  return Date.now() - new Date(fetchedAt).getTime() > maxAgeMs
 }

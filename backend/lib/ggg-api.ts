@@ -2,6 +2,10 @@ import { USER_AGENT } from './constants.js'
 
 const GGG_API = 'https://api.pathofexile.com'
 const RATE_LIMIT_PREFIX = 'x-rate-limit-'
+// Keep one request in reserve before treating the window as exhausted
+const RATE_LIMIT_SAFETY_RESERVE = 1
+// Fallback wait time when a 429 response omits the Retry-After header
+const DEFAULT_RETRY_AFTER_SECONDS = 60
 const UA = { 'User-Agent': USER_AGENT }
 
 export interface StashTab {
@@ -47,7 +51,7 @@ export function parseRateLimitDelay(headers: Headers): number {
     if (!maxHits || !period) continue
 
     const remaining = maxHits - currentHits
-    if (remaining <= 1) {
+    if (remaining <= RATE_LIMIT_SAFETY_RESERVE) {
       // Essentially at the limit — wait out the full window
       minDelay = Math.max(minDelay, period * 1000)
     } else {
@@ -64,7 +68,8 @@ async function gggFetch(url: string, headers: Record<string, string>): Promise<{
   let res = await fetch(url, { headers })
 
   if (res.status === 429) {
-    const retryAfter = parseInt(res.headers.get('Retry-After') ?? '60', 10)
+    const retryAfterHeader = res.headers.get('Retry-After')
+    const retryAfter = retryAfterHeader ? parseInt(retryAfterHeader, 10) : DEFAULT_RETRY_AFTER_SECONDS
     console.log(`[ggg-api] Rate limited — waiting ${retryAfter}s before retry`)
     await sleep(retryAfter * 1000)
     res = await fetch(url, { headers })

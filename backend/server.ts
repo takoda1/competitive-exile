@@ -8,6 +8,12 @@ import { refreshPricesForActiveLeagues } from './jobs/price-refresh.js'
 import { takeSnapshotsForAllUsers } from './jobs/snapshot.js'
 
 const REQUIRED_ENV = ['SESSION_SECRET', 'OAUTH_CLIENT_ID', 'OAUTH_CLIENT_SECRET', 'GGG_REDIRECT_URI'] as const
+
+const DEFAULT_PORT = 3000
+// Run snapshot pruning once per day (keeps the DB from growing unboundedly)
+const PRUNE_INTERVAL_MS = 24 * 60 * 60 * 1000
+// Refresh poe.ninja prices and take wealth snapshots once per hour
+const HOURLY_INTERVAL_MS = 60 * 60 * 1000
 for (const key of REQUIRED_ENV) {
   if (!process.env[key]) {
     console.error(`Missing required environment variable: ${key}`)
@@ -28,16 +34,16 @@ app.get('/', async () => {
 })
 
 pruneSnapshots()
-setInterval(pruneSnapshots, 24 * 60 * 60 * 1000)
+setInterval(pruneSnapshots, PRUNE_INTERVAL_MS)
 
 refreshPricesForActiveLeagues()
-setInterval(refreshPricesForActiveLeagues, 60 * 60 * 1000)
+setInterval(refreshPricesForActiveLeagues, HOURLY_INTERVAL_MS)
 
 takeSnapshotsForAllUsers()
-setInterval(takeSnapshotsForAllUsers, 60 * 60 * 1000)
+setInterval(takeSnapshotsForAllUsers, HOURLY_INTERVAL_MS)
 
 try {
-  await app.listen({ port: Number(process.env.PORT ?? 3000), host: '0.0.0.0' })
+  await app.listen({ port: Number(process.env.PORT ?? DEFAULT_PORT), host: '0.0.0.0' })
 } catch (err) {
   app.log.error(err)
   process.exit(1)

@@ -1,7 +1,8 @@
 import { refreshAccessToken } from './ggg-client.js'
 import { getUserById, updateUserTokens, type User } from '../db/users.js'
 
-const REFRESH_BUFFER_MS = 60 * 60 * 1000 // refresh when within 1 hour of expiry
+// Refresh the token when within 1 hour of expiry — avoids mid-request failures
+export const REFRESH_BUFFER_MS = 60 * 60 * 1000
 
 export async function getValidAccessToken(user: User): Promise<string> {
   const expiry = new Date(user.token_expiry).getTime()
