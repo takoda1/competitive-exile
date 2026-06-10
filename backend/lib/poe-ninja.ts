@@ -13,6 +13,8 @@ const ITEM_TYPES = [
   'BlightedRavagedMap', 'Coffin', 'AllflameEmber',
 ]
 
+export const ALL_PRICE_CATEGORIES = [...CURRENCY_TYPES, ...ITEM_TYPES]
+
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

@@ -1,15 +1,6 @@
 import { getPriceCache } from '../db/price-cache.js'
+import { ALL_PRICE_CATEGORIES } from './poe-ninja.js'
 import type { GGGItem } from './ggg-api.js'
-
-const ALL_CATEGORIES = [
-  'Currency', 'Fragment',
-  'Oil', 'Incubator', 'Scarab', 'Fossil', 'Resonator', 'Essence',
-  'DivinationCard', 'SkillGem', 'UniqueMap', 'Map', 'UniqueJewel',
-  'UniqueFlask', 'UniqueWeapon', 'UniqueArmour', 'UniqueAccessory',
-  'DeliriumOrb', 'Beast', 'Vial', 'Invitation', 'BlightedMap',
-  'BaseType', 'ClusterJewel', 'UniqueRelic', 'Omen', 'Memory',
-  'BlightedRavagedMap', 'Coffin', 'AllflameEmber',
-]
 
 // "Chaos Orb" → "chaos-orb", "Rogue's Marker" → "rogues-marker"
 function toSlug(name: string): string {
@@ -21,7 +12,10 @@ function cleanName(name: string): string {
   return name.replace(/<<[^>]+>>/g, '').trim()
 }
 
-export type PriceMap = Map<string, number>
+export interface PriceMap {
+  bySlug: Map<string, number>
+  byName: Map<string, number>
+}
 
 export function buildPriceMap(league: string): PriceMap {
   // slug → chaos value (e.g. "ambush-scarab" → 27.8)
@@ -29,7 +23,7 @@ export function buildPriceMap(league: string): PriceMap {
   // display name → chaos value (e.g. "Chaos Orb" → 1, "Divine Orb" → 603.8)
   const byName = new Map<string, number>()
 
-  for (const category of ALL_CATEGORIES) {
+  for (const category of ALL_PRICE_CATEGORIES) {
     const cached = getPriceCache(league, category)
     if (!cached) continue
 
@@ -59,16 +53,11 @@ export function buildPriceMap(league: string): PriceMap {
     }
   }
 
-  return { bySlug, byName } as unknown as PriceMap
-}
-
-interface InternalPriceMap {
-  bySlug: Map<string, number>
-  byName: Map<string, number>
+  return { bySlug, byName }
 }
 
 export function getItemChaosValue(item: GGGItem, priceMap: PriceMap): number {
-  const { bySlug, byName } = priceMap as unknown as InternalPriceMap
+  const { bySlug, byName } = priceMap
   const stack = item.stackSize ?? 1
 
   const uniqueName = cleanName(item.name)

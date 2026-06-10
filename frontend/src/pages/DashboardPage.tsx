@@ -32,18 +32,37 @@ export default function DashboardPage() {
 
   function triggerSnapshot() {
     setSnapshotPending(true)
-    fetch('/api/snapshot', { method: 'POST' })
-      .then(r => r.json())
-      .then(() => {
-        // Poll for new data after a delay
-        setTimeout(() => {
-          fetch('/api/wealth')
-            .then(r => r.ok ? r.json() as Promise<WealthData> : null)
-            .then(d => setData(d))
-            .finally(() => setSnapshotPending(false))
-        }, 5000)
-      })
-      .catch(() => setSnapshotPending(false))
+    const triggeredAt = Date.now()
+    const prevId = data?.snapshots[0]?.id ?? null
+
+    fetch('/api/snapshot', { method: 'POST' }).catch(() => {
+      setSnapshotPending(false)
+    })
+
+    // Poll every 8s until a snapshot newer than the trigger appears, or 5 min timeout
+    const POLL_MS = 8000
+    const TIMEOUT_MS = 5 * 60 * 1000
+
+    function poll() {
+      if (Date.now() - triggeredAt > TIMEOUT_MS) {
+        setSnapshotPending(false)
+        return
+      }
+      setTimeout(() => {
+        fetch('/api/wealth')
+          .then(r => r.ok ? r.json() as Promise<WealthData> : null)
+          .then(d => {
+            if (d && d.snapshots[0]?.id !== prevId) {
+              setData(d)
+              setSnapshotPending(false)
+            } else {
+              poll()
+            }
+          })
+          .catch(() => poll())
+      }, POLL_MS)
+    }
+    poll()
   }
 
   if (authLoading) return null

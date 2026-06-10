@@ -38,11 +38,15 @@ export default fp(async (app) => {
       if (req.user) {
         const expiry = new Date(req.user.token_expiry).getTime()
         if (Date.now() > expiry - 60 * 60 * 1000) {
-          try {
-            await getValidAccessToken(req.user)
-            req.user = getUserById(userId) ?? null
-          } catch {
+          if (!req.user.refresh_token) {
             req.user = null
+          } else {
+            try {
+              await getValidAccessToken(req.user)
+              req.user = getUserById(userId) ?? null
+            } catch (err) {
+              req.log.warn({ err }, 'Token refresh failed; proceeding with existing token')
+            }
           }
         }
       }
@@ -51,7 +55,7 @@ export default fp(async (app) => {
 
   app.decorate('authenticate', async (req: FastifyRequest, reply: FastifyReply) => {
     if (req.user == null) {
-      reply.code(401).send({ error: 'Not authenticated' })
+      return reply.code(401).send({ error: 'Not authenticated' })
     }
   })
 })

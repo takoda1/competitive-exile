@@ -12,7 +12,7 @@ export async function getValidAccessToken(user: User): Promise<string> {
     throw new Error('Token expired and no refresh token available')
   }
   const tokens = await refreshAccessToken(user.refresh_token)
-  updateUserTokens(user.id, tokens.access_token, tokens.refresh_token ?? null, tokens.expires_in)
+  updateUserTokens(user.id, tokens.access_token, tokens.refresh_token ?? user.refresh_token, tokens.expires_in)
   return tokens.access_token
 }
 

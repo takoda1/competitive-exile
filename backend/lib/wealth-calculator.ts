@@ -5,6 +5,7 @@ import { buildPriceMap, getItemChaosValue } from './price-lookup.js'
 const MIN_TAB_DELAY_MS = 1500
 
 // Prevents two concurrent wealth calculations for the same user
+// NOTE: this guard is process-local; under horizontal scaling, use a DB advisory lock instead.
 const inProgress = new Set<number>()
 
 function sleep(ms: number) {
@@ -26,6 +27,7 @@ export async function calculateWealth(userId: number, accessToken: string, leagu
     let totalChaos = 0
     let pricedItems = 0
     let unpricedItems = 0
+    let tabsFailed = 0
     let delay = Math.max(MIN_TAB_DELAY_MS, afterList)
 
     for (const tab of tabs) {
@@ -41,8 +43,14 @@ export async function calculateWealth(userId: number, accessToken: string, leagu
         }
       } catch (err) {
         console.error(`[wealth] Failed to fetch tab "${tab.name}" (${tab.id}):`, err instanceof Error ? err.message : err)
+        tabsFailed++
         delay = MIN_TAB_DELAY_MS
       }
+    }
+
+    if (tabs.length > 0 && tabsFailed === tabs.length) {
+      console.warn(`[wealth] All ${tabs.length} tab(s) failed for user ${userId} — skipping snapshot`)
+      return -1
     }
 
     console.log(`[wealth] Total: ${totalChaos.toFixed(1)}c — priced: ${pricedItems}, unpriced: ${unpricedItems}`)

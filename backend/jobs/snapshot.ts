@@ -1,5 +1,5 @@
 import { getAllUsers } from '../db/users.js'
-import { getValidAccessToken } from '../lib/token-refresh.js'
+import { getValidAccessToken, getValidAccessTokenById } from '../lib/token-refresh.js'
 import { calculateWealth } from '../lib/wealth-calculator.js'
 import { saveSnapshot } from '../db/snapshots.js'
 
@@ -9,11 +9,6 @@ export async function takeSnapshotForUser(userId: number, league: string): Promi
   if (totalChaos === -1) return -1 // already in progress
   saveSnapshot(userId, league, totalChaos)
   return totalChaos
-}
-
-async function getValidAccessTokenById(userId: number): Promise<string> {
-  const { getValidAccessTokenById: fn } = await import('../lib/token-refresh.js')
-  return fn(userId)
 }
 
 export async function takeSnapshotsForAllUsers(): Promise<void> {
@@ -29,7 +24,11 @@ export async function takeSnapshotsForAllUsers(): Promise<void> {
     console.log(`[snapshot] Taking snapshot for ${user.ggg_account_name} (${league})`)
     try {
       const total = await takeSnapshotForUser(user.id, league)
-      console.log(`[snapshot] ${user.ggg_account_name}: ${total.toFixed(1)}c`)
+      if (total === -1) {
+        console.log(`[snapshot] ${user.ggg_account_name}: skipped (already in progress)`)
+      } else {
+        console.log(`[snapshot] ${user.ggg_account_name}: ${total.toFixed(1)}c`)
+      }
     } catch (err) {
       console.error(`[snapshot] Failed for ${user.ggg_account_name}:`, err instanceof Error ? err.message : err)
     }
