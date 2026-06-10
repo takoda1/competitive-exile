@@ -8,6 +8,7 @@ export default defineConfig({
     allowedHosts: ['competitive-exile.ngrok.app'],
     proxy: {
       '/auth': 'http://localhost:3000',
+      '/api': 'http://localhost:3000',
     },
   },
 })

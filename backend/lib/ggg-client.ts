@@ -1,3 +1,5 @@
+import { USER_AGENT } from './constants.js'
+
 const DEFAULT_TOKEN_URL = 'https://www.pathofexile.com/oauth/token'
 
 export interface TokenResponse {
@@ -15,7 +17,10 @@ async function postForm(body: Record<string, string>): Promise<TokenResponse> {
   const tokenUrl = process.env.OAUTH_TOKEN_URL ?? DEFAULT_TOKEN_URL
   const res = await fetch(tokenUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': USER_AGENT,
+    },
     body: new URLSearchParams(body).toString(),
   })
 

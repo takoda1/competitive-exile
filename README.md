@@ -16,3 +16,10 @@ Feature list
 3. `npm run dev` (runs both backend + frontend via concurrently)
 4. Or individually: `cd backend && npm run dev` / `cd frontend && npm run dev`
 5. Tunnel: `http --url=competitive-exile.ngrok.app 5173`
+
+
+## General Todos
+- Get additional scopes account:leagues and account:profile
+- Set up Railway as hosting service
+- Set up some sort of CI/CD with integration tests + robust unit tests
+- Have agent be able to detect CI/CD failures as part of a development loop

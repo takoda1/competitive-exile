@@ -2,9 +2,16 @@ import { Routes, Route, NavLink } from 'react-router-dom'
 import GuidePage from './pages/GuidePage.tsx'
 import DashboardPage from './pages/DashboardPage.tsx'
 import LeaderboardPage from './pages/LeaderboardPage.tsx'
+import { useAuth } from './hooks/useAuth.ts'
 import './App.css'
 
+function logout() {
+  fetch('/auth/logout', { method: 'POST' }).then(() => window.location.reload())
+}
+
 export default function App() {
+  const { user, loading } = useAuth()
+
   return (
     <div className="app">
       <header className="site-header">
@@ -15,9 +22,16 @@ export default function App() {
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/leaderboard">Leaderboard</NavLink>
         </nav>
-        <button className="login-btn" onClick={() => window.location.href = '/auth/login'}>
-          Login with PoE
-        </button>
+        {!loading && (
+          user
+            ? <div className="auth-user">
+                <span className="auth-username">{user.accountName}</span>
+                <button className="logout-btn" onClick={logout}>Logout</button>
+              </div>
+            : <button className="login-btn" onClick={() => window.location.href = '/auth/login'}>
+                Login with PoE
+              </button>
+        )}
       </header>
       <main className="site-main">
         <Routes>
