@@ -1,5 +1,8 @@
+import { USER_AGENT } from './constants.js'
+
 const GGG_API = 'https://api.pathofexile.com'
-const UA = { 'User-Agent': 'competitive-exile/1.0' }
+const RATE_LIMIT_PREFIX = 'x-rate-limit-'
+const UA = { 'User-Agent': USER_AGENT }
 
 export interface StashTab {
   id: string
@@ -33,9 +36,9 @@ export function parseRateLimitDelay(headers: Headers): number {
   let minDelay = 0
   for (const [key, value] of headers.entries()) {
     const lk = key.toLowerCase()
-    if (!lk.startsWith('x-rate-limit-') || !lk.endsWith('-state')) continue
-    const ruleName = lk.slice('x-rate-limit-'.length, -'-state'.length)
-    const limitValue = headers.get(`x-rate-limit-${ruleName}`)
+    if (!lk.startsWith(RATE_LIMIT_PREFIX) || !lk.endsWith('-state')) continue
+    const ruleName = lk.slice(RATE_LIMIT_PREFIX.length, -'-state'.length)
+    const limitValue = headers.get(`${RATE_LIMIT_PREFIX}${ruleName}`)
     if (!limitValue) continue
 
     // Both formats: "hits:period:restriction"

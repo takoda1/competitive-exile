@@ -1,7 +1,8 @@
 import { upsertPriceCache } from '../db/price-cache.js'
+import { USER_AGENT } from './constants.js'
 
 const BASE = 'https://poe.ninja/poe1/api/economy/exchange/current/overview'
-const UA = { 'User-Agent': 'competitive-exile/1.0' }
+const UA = { 'User-Agent': USER_AGENT }
 
 const CURRENCY_TYPES = ['Currency', 'Fragment']
 const ITEM_TYPES = [
@@ -10,10 +11,15 @@ const ITEM_TYPES = [
   'UniqueFlask', 'UniqueWeapon', 'UniqueArmour', 'UniqueAccessory',
   'DeliriumOrb', 'Beast', 'Vial', 'Invitation', 'BlightedMap',
   'BaseType', 'ClusterJewel', 'UniqueRelic', 'Omen', 'Memory',
-  'BlightedRavagedMap', 'Coffin', 'AllflameEmber',
+  'BlightedRavagedMap', 'AllflameEmber',
 ]
 
 export const ALL_PRICE_CATEGORIES = [...CURRENCY_TYPES, ...ITEM_TYPES]
+
+export interface PoeNinjaResponse {
+  lines: Array<{ id: string; primaryValue: number }>
+  core?: { items?: Array<{ id: string; name: string }> }
+}
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))

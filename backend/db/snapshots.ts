@@ -8,7 +8,7 @@ export interface Snapshot {
   taken_at: string
 }
 
-const SNAPSHOT_TTL_DAYS = 90
+const SNAPSHOT_TTL_DAYS = 30 // A majority of players are not playing past 30 days
 
 const insertSnapshot = db.prepare<[number, string, number]>(
   'INSERT INTO snapshots (user_id, league, total_chaos) VALUES (?, ?, ?)',

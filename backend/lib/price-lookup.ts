@@ -1,5 +1,5 @@
 import { getPriceCache } from '../db/price-cache.js'
-import { ALL_PRICE_CATEGORIES } from './poe-ninja.js'
+import { ALL_PRICE_CATEGORIES, type PoeNinjaResponse } from './poe-ninja.js'
 import type { GGGItem } from './ggg-api.js'
 
 // "Chaos Orb" → "chaos-orb", "Rogue's Marker" → "rogues-marker"
@@ -27,7 +27,7 @@ export function buildPriceMap(league: string): PriceMap {
     const cached = getPriceCache(league, category)
     if (!cached) continue
 
-    let data: { core?: { items?: Array<{ id: string; name: string }> }; lines?: Array<{ id: string; primaryValue: number }> }
+    let data: PoeNinjaResponse
     try {
       data = JSON.parse(cached.data_json)
     } catch {

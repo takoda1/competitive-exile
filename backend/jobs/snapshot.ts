@@ -11,6 +11,7 @@ export async function takeSnapshotForUser(userId: number, league: string): Promi
   return totalChaos
 }
 
+// TODO: determine more efficient subset of users to snapshot based on last site access or something
 export async function takeSnapshotsForAllUsers(): Promise<void> {
   const users = getAllUsers()
   const defaultLeague = process.env.DEFAULT_LEAGUE

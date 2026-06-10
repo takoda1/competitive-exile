@@ -1,3 +1,5 @@
+import { USER_AGENT } from './constants.js'
+
 const DEFAULT_TOKEN_URL = 'https://www.pathofexile.com/oauth/token'
 
 export interface TokenResponse {
@@ -17,7 +19,7 @@ async function postForm(body: Record<string, string>): Promise<TokenResponse> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'competitive-exile/1.0',
+      'User-Agent': USER_AGENT,
     },
     body: new URLSearchParams(body).toString(),
   })

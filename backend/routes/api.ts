@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { getSnapshots, getLeaderboard } from '../db/snapshots.js'
 import { takeSnapshotForUser } from '../jobs/snapshot.js'
+import { USER_AGENT } from '../lib/constants.js'
 
 export default async function apiRoutes(app: FastifyInstance) {
   // Current user's wealth history
@@ -29,7 +30,7 @@ export default async function apiRoutes(app: FastifyInstance) {
   app.get('/debug/stash', { preHandler: [app.authenticate] }, async (req) => {
     const { getValidAccessToken } = await import('../lib/token-refresh.js')
     const token = await getValidAccessToken(req.user!)
-    const headers = { 'User-Agent': 'competitive-exile/1.0', Authorization: `Bearer ${token}` }
+    const headers = { 'User-Agent': USER_AGENT, Authorization: `Bearer ${token}` }
     const probes = [
       'https://api.pathofexile.com/stash/Standard',
       'https://api.pathofexile.com/stash/Mirage',
