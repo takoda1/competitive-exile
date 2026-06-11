@@ -15,20 +15,48 @@ interface WealthData {
   snapshots: Snapshot[]
 }
 
+interface GGGLeague {
+  id: string
+  realm?: string
+}
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const [data, setData] = useState<WealthData | null>(null)
   const [fetching, setFetching] = useState(false)
   const [snapshotPending, setSnapshotPending] = useState(false)
+  const [leagues, setLeagues] = useState<GGGLeague[]>([])
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(user?.selectedLeague ?? null)
 
   useEffect(() => {
     if (!user) return
+    setSelectedLeague(user.selectedLeague)
+    fetch('/api/leagues')
+      .then(r => r.ok ? r.json() as Promise<{ leagues: GGGLeague[] }> : null)
+      .then(d => { if (d) setLeagues(d.leagues) })
+  }, [user])
+
+  function loadWealth() {
     setFetching(true)
     fetch('/api/wealth')
       .then(r => r.ok ? r.json() as Promise<WealthData> : null)
       .then(d => setData(d))
       .finally(() => setFetching(false))
+  }
+
+  useEffect(() => {
+    if (!user) return
+    loadWealth()
   }, [user])
+
+  function changeLeague(league: string) {
+    setSelectedLeague(league)
+    fetch('/api/league', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ league }),
+    }).then(() => loadWealth())
+  }
 
   function triggerSnapshot() {
     setSnapshotPending(true)
@@ -81,13 +109,26 @@ export default function DashboardPage() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1 className="dashboard-title">Your Wealth</h1>
-        <button
-          className="snapshot-btn"
-          onClick={triggerSnapshot}
-          disabled={snapshotPending}
-        >
-          {snapshotPending ? 'Calculating…' : 'Refresh Now'}
-        </button>
+        <div className="dashboard-controls">
+          {leagues.length > 0 && (
+            <select
+              className="league-select"
+              value={selectedLeague ?? ''}
+              onChange={e => changeLeague(e.target.value)}
+            >
+              {leagues.map(l => (
+                <option key={l.id} value={l.id}>{l.id}</option>
+              ))}
+            </select>
+          )}
+          <button
+            className="snapshot-btn"
+            onClick={triggerSnapshot}
+            disabled={snapshotPending}
+          >
+            {snapshotPending ? 'Calculating…' : 'Refresh Now'}
+          </button>
+        </div>
       </div>
 
       {fetching && <p className="dashboard-hint">Loading…</p>}

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 interface AuthUser {
   accountName: string
   gggUuid: string
+  selectedLeague: string | null
 }
 
 interface AuthState {
