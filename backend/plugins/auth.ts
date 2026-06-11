@@ -10,6 +10,7 @@ declare module '@fastify/session' {
     oauthState?: string
     codeVerifier?: string
     userId?: number
+    postLoginRedirect?: string
   }
 }
 

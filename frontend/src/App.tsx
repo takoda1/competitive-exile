@@ -28,7 +28,7 @@ export default function App() {
                 <span className="auth-username">{user.accountName}</span>
                 <button className="logout-btn" onClick={logout}>Logout</button>
               </div>
-            : <button className="login-btn" onClick={() => window.location.href = '/auth/login'}>
+            : <button className="login-btn" onClick={() => window.location.href = `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`}>
                 Login with PoE
               </button>
         )}

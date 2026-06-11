@@ -2,7 +2,8 @@ import type { FastifyInstance } from 'fastify'
 import rateLimit from '@fastify/rate-limit'
 import { generateCodeVerifier, generateCodeChallenge, generateState } from '../lib/pkce.js'
 import { exchangeCode } from '../lib/ggg-client.js'
-import { saveUser } from '../db/users.js'
+import { saveUser, getUserById, updateSelectedLeague } from '../db/users.js'
+import { getAccountLeagues } from '../lib/ggg-api.js'
 
 const DEFAULT_AUTH_URL = 'https://www.pathofexile.com/oauth/authorize'
 const DEFAULT_SCOPES = 'account:characters account:stashes account:leagues'
@@ -40,13 +41,19 @@ const oauthRateLimit = { config: { rateLimit: { max: OAUTH_RATE_LIMIT_MAX, timeW
 export default async function authRoutes(app: FastifyInstance) {
   await app.register(rateLimit, { global: false })
 
-  app.get('/login', oauthRateLimit, async (req, reply) => {
+  app.get<{ Querystring: { redirect?: string } }>('/login', oauthRateLimit, async (req, reply) => {
     const verifier = generateCodeVerifier()
     const challenge = await generateCodeChallenge(verifier)
     const state = generateState()
 
     req.session.codeVerifier = verifier
     req.session.oauthState = state
+
+    // Only allow relative paths to prevent open redirect
+    const redirectPath = req.query.redirect
+    if (redirectPath && /^\/[^/]/.test(redirectPath)) {
+      req.session.postLoginRedirect = redirectPath
+    }
 
     const authUrl = process.env.OAUTH_AUTH_URL ?? DEFAULT_AUTH_URL
     const scopes = process.env.OAUTH_SCOPES ?? DEFAULT_SCOPES
@@ -90,6 +97,8 @@ export default async function authRoutes(app: FastifyInstance) {
 
       req.session.oauthState = undefined
       req.session.codeVerifier = undefined
+      const postLoginRedirect = req.session.postLoginRedirect
+      req.session.postLoginRedirect = undefined
 
       try {
         const tokens = await exchangeCode(code, codeVerifier, process.env.GGG_REDIRECT_URI!)
@@ -108,12 +117,24 @@ export default async function authRoutes(app: FastifyInstance) {
         )
 
         req.session.userId = userId
+
+        // Auto-select first league if the user has none set
+        const user = getUserById(userId)
+        if (user && !user.selected_league) {
+          try {
+            const leagues = await getAccountLeagues(tokens.access_token)
+            if (leagues.length > 0) updateSelectedLeague(userId, leagues[0].id)
+          } catch (err) {
+            req.log.warn(err, 'Could not auto-select league on first login')
+          }
+        }
       } catch (err) {
         req.log.error(err, 'OAuth token exchange failed')
         return reply.code(400).send({ error: 'Authentication failed' })
       }
 
-      return reply.redirect(process.env.FRONTEND_URL ?? '/')
+      const base = process.env.FRONTEND_URL ?? ''
+      return reply.redirect(postLoginRedirect ? `${base}${postLoginRedirect}` : `${base}/`)
     },
   )
 
@@ -123,6 +144,10 @@ export default async function authRoutes(app: FastifyInstance) {
   })
 
   app.get('/me', { preHandler: [app.authenticate] }, async (req) => {
-    return { accountName: req.user!.ggg_account_name, gggUuid: req.user!.ggg_uuid }
+    return {
+      accountName: req.user!.ggg_account_name,
+      gggUuid: req.user!.ggg_uuid,
+      selectedLeague: req.user!.selected_league,
+    }
   })
 }

@@ -113,3 +113,20 @@ export async function getStashTab(token: string, league: string, stashId: string
   const data = await res.json() as { stash: { items?: GGGItem[] } }
   return { items: data.stash.items ?? [], nextDelay }
 }
+
+export interface GGGLeague {
+  id: string
+  name: string
+  realm?: string
+  category?: { id: string; current?: boolean }
+}
+
+export async function getAccountLeagues(token: string): Promise<GGGLeague[]> {
+  const url = `${GGG_API}/account/leagues`
+  console.log(`[ggg-api] GET ${url}`)
+  const { res } = await gggFetch(url, authHeaders(token))
+  if (!res.ok) throw new Error(`GGG account leagues ${res.status}: ${await res.text().catch(() => '')}`)
+  const data = await res.json() as { leagues?: GGGLeague[] } | GGGLeague[]
+  const all = Array.isArray(data) ? data : (data.leagues ?? [])
+  return all.filter(l => l.category?.current === true)
+}

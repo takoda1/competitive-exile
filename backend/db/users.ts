@@ -53,6 +53,12 @@ export function getActiveLeagues(): string[] {
   return (activeLeagues.all() as { selected_league: string }[]).map(r => r.selected_league)
 }
 
+const setLeague = db.prepare<[string, number]>('UPDATE users SET selected_league = ? WHERE id = ?')
+
+export function updateSelectedLeague(id: number, league: string): void {
+  setLeague.run(league, id)
+}
+
 const updateTokens = db.prepare<[string, string | null, string, number]>(`
   UPDATE users SET access_token = ?, refresh_token = ?, token_expiry = ? WHERE id = ?
 `)
